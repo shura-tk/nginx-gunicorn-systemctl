@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"nginx-gunicorn-systemctl/internal/commands/create"
 	"os"
 )
 
@@ -14,8 +15,7 @@ func main() {
 	}
 	switch args[1] {
 	case "create":
-		fmt.Println("Здесь будет выполняться команда create")
-		//create.CreateApps(&args)
+		create.Create(&args)
 	default:
 		fmt.Println("Данная команда не найдена!")
 		os.Exit(0)
