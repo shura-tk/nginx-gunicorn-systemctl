@@ -22,16 +22,21 @@ func Create(args *[]string) {
 	if existDir(pathToProject) { //Проверка на уже существующий проект
 		fmt.Println("Проект с указанным именем уже существует!")
 		os.Exit(1)
-	} else { //Создание дирректории для проекта
+	} else { //Создание директории для проекта
 		err := os.MkdirAll(pathToProject, 0755)
 		if err != nil {
 			panic(err)
 		}
+
+		//Генерация файла service
+		service := systemd.Service{NameProject: (*args)[2]}
+		service.Create()
+
+		//Генерация файла socket
+		socket := systemd.Socket{NameProject: (*args)[2]}
+		socket.Create()
 	}
 
-	//Генерация файла service
-	s := systemd.Service{NameProject: (*args)[2]}
-	s.Create()
 }
 
 func existDir(path string) bool {
