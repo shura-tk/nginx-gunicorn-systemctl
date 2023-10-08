@@ -2,6 +2,7 @@ package create
 
 import (
 	"fmt"
+	"nginx-gunicorn-systemctl/internal/commands/systemd"
 	"os"
 )
 
@@ -22,11 +23,15 @@ func Create(args *[]string) {
 		fmt.Println("Проект с указанным именем уже существует!")
 		os.Exit(1)
 	} else { //Создание дирректории для проекта
-		err := os.MkdirAll(pathToProject, 0700)
+		err := os.MkdirAll(pathToProject, 0755)
 		if err != nil {
 			panic(err)
 		}
 	}
+
+	//Генерация файла service
+	s := systemd.Service{NameProject: (*args)[2]}
+	s.Create()
 }
 
 func existDir(path string) bool {

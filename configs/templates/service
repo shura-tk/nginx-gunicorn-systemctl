@@ -1,0 +1,15 @@
+[Unit]
+Description=ngs_{{.NameProject}} daemon
+Requires=ngs_{{.NameProject}}.socket
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/ngs/{{.NameProject}}
+ExecStart=/opt/ngs/{{.NameProject}}/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn.sock \
+          {{.NameProject}}.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
