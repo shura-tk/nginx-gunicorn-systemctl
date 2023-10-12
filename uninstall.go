@@ -8,4 +8,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	//Удаление из /etc/systemd/system
+	cmd = "sudo rm /etc/systemd/system/ngs_*.socket && sudo rm /etc/systemd/system/ngs_*.service"
+	err = exec.Command("bash", "-c", cmd).Start()
+	if err != nil {
+		panic(err)
+	}
 }
