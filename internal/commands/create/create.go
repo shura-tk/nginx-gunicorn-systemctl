@@ -2,11 +2,14 @@ package create
 
 import (
 	"fmt"
+	"nginx-gunicorn-systemctl/internal/commands/nginx"
+	"nginx-gunicorn-systemctl/internal/commands/systemctl"
 	"nginx-gunicorn-systemctl/internal/commands/systemd"
+	"nginx-gunicorn-systemctl/pkg/osdir"
 	"os"
 )
 
-const pathToDirProjects = "/opt/ngs/"
+const pathToProdPjt = "/opt/ngs/development/"
 
 var pathToProject string
 
@@ -15,18 +18,17 @@ func Create(args *[]string) {
 	if len(*args) < 3 {
 		fmt.Println("Не указано имя проекта!")
 		os.Exit(0)
+
 	}
 
-	pathToProject = pathToDirProjects + (*args)[2] //Проверка на уже существующий проект
+	pathToProject = pathToProdPjt + (*args)[2] //Проверка на уже существующий проект
 
-	if existDir(pathToProject) { //Проверка на уже существующий проект
+	if osdir.ExistDir(pathToProject) { //Проверка на уже существующий проект
 		fmt.Println("Проект с указанным именем уже существует!")
 		os.Exit(1)
 	} else { //Создание директории для проекта
-		err := os.MkdirAll(pathToProject, 0755)
-		if err != nil {
-			panic(err)
-		}
+
+		osdir.CreateAllDir(pathToProject)
 
 		//Генерация файла service
 		service := systemd.Service{NameProject: (*args)[2]}
@@ -35,17 +37,13 @@ func Create(args *[]string) {
 		//Генерация файла socket
 		socket := systemd.Socket{NameProject: (*args)[2]}
 		socket.Create()
-	}
 
-}
+		//Запуск команды demon-reload
+		systemctl.DaemonReload()
 
-func existDir(path string) bool {
-	//Функция проверяет, существует ли данная дирректория
-	_, err := os.Stat(path)
-	if err == nil {
-		return true
-	} else {
-		return false
+		//Создание конфигурационных файлов nginx
+		nginx.Nginx{NameProject: (*args)[2]}.CreateConf()
+
 	}
 
 }

@@ -4,11 +4,11 @@ Requires=ngs_{{.NameProject}}.socket
 After=network.target
 
 [Service]
-WorkingDirectory=/opt/ngs/{{.NameProject}}
-ExecStart=/opt/ngs/{{.NameProject}}/venv/bin/gunicorn \
+WorkingDirectory=/opt/ngs/development/{{.NameProject}}/{{.NameProject}}
+ExecStart=/opt/ngs/development/{{.NameProject}}/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
-          --bind unix:/run/gunicorn.sock \
+          --bind unix:/run/ngs_{{.NameProject}}.sock \
           {{.NameProject}}.wsgi:application
 
 [Install]

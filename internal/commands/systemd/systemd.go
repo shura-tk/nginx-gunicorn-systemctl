@@ -1,13 +1,14 @@
 package systemd
 
 import (
+	"nginx-gunicorn-systemctl/internal/commands/systemctl"
 	"os"
 	"text/template"
 )
 
 const pathToService = "/etc/systemd/system/"
 const pathToSocket = pathToService
-const pathToTemplates = "/etc/ngs/templates/service"
+const pathToTemplates = "/etc/ngs/templates/"
 
 type Service struct {
 	NameProject string
@@ -19,12 +20,13 @@ type Socket struct {
 
 func (s *Socket) Create() {
 	s.generateFile()
+	systemctl.DaemonReload()
 }
 
 func (s *Socket) generateFile() {
 	//Генерация socket-файла на основе шаблона и сохранение его.
 
-	tmp, err := template.New("socket").ParseFiles(pathToTemplates)
+	tmp, err := template.New("socket").ParseFiles(pathToTemplates + "socket")
 	if err != nil {
 		panic(err)
 	}
@@ -48,12 +50,14 @@ func (s *Socket) generateFile() {
 
 func (s *Service) Create() {
 	s.generateFile()
+	systemctl.DaemonReload()
+
 }
 
 func (s *Service) generateFile() {
 	//Генерация systend-файла на основе шаблона и сохранение его.
 
-	tmp, err := template.New("service").ParseFiles(pathToTemplates)
+	tmp, err := template.ParseFiles(pathToTemplates + "service")
 	if err != nil {
 		panic(err)
 	}
