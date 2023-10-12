@@ -1,9 +1,12 @@
 package osdir
 
-import "os"
+import (
+	"os"
+)
 
 func CreateAllDir(path string) {
-	err := os.MkdirAll(path, 0775)
+
+	err := os.MkdirAll(path, 0770)
 	if err != nil {
 		panic(err)
 	}

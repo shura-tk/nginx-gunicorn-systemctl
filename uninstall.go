@@ -15,4 +15,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	//Удаление группы пользователей
+	cmd = "sudo groupdell ngs"
+	err = exec.Command("bash", "-c", cmd).Start()
+	if err != nil {
+		panic(err)
+	}
+
 }

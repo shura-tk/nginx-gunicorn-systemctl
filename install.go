@@ -6,10 +6,10 @@ import (
 )
 
 const pathToTemplates = "/etc/ngs/templates/"
-const pathToNgs = "/etc/ngs/"
-const pathToProdPjt = "/opt/ngs/production/" //Путь для проектов для продакшина
-const pathToDevPjt = "/opt/ngs/development/"
-const pathToService = "/etc/systemd/system/" //Путь для разрабатываемых и тестируемых проектов
+const pathToNgs = "/etc/ngs/"                //Путь до каталога с проектами
+const pathToProdPjt = "/opt/ngs/production/" //Путь для продакшин проектов
+const pathToDevPjt = "/opt/ngs/development/" //Путь для разрабатываемых и тестируемых проектов
+const pathToService = "/etc/systemd/system/"
 
 func main() {
 	// 1. Копирование ~cmd/ngs/ngs в /bin
@@ -40,4 +40,10 @@ func main() {
 		osdir.CreateAllDir(pathToProdPjt)
 	}
 
+	//5. Создать группу пользователей, имеющие доступ к /opt/ngs
+	cmd = "sudo groupadd ngs -f"
+	err = exec.Command("bash", "-c", cmd).Start()
+	if err != nil {
+		panic(err)
+	}
 }

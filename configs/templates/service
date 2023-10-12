@@ -4,8 +4,8 @@ Requires=ngs_{{.NameProject}}.socket
 After=network.target
 
 [Service]
-WorkingDirectory=/opt/ngs/development/{{.NameProject}}/{{.NameProject}}
-ExecStart=/opt/ngs/development/{{.NameProject}}/venv/bin/gunicorn \
+WorkingDirectory=/opt/ngs/production/{{.NameProject}}/{{.NameProject}}
+ExecStart=/opt/ngs/production/{{.NameProject}}/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
           --bind unix:/run/ngs_{{.NameProject}}.sock \

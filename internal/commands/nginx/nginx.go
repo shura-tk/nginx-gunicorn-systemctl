@@ -20,7 +20,6 @@ func (n Nginx) CreateConf() {
 
 	// Перезагрузка службы nginx
 	n.serviceReload()
-
 }
 
 func (n Nginx) createSimlink() {

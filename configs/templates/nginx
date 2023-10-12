@@ -3,7 +3,7 @@ server {
     server_name {{.NameProject}}.vbti.local;
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        root /opt/ngs/development/{{.NameProject}}/{{.NameProject}}/{{.NameProject}};
+        root /opt/ngs/production/{{.NameProject}}/{{.NameProject}}/{{.NameProject}};
     }
     location / {
         include proxy_params;

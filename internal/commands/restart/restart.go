@@ -14,7 +14,7 @@ func Restart(args *[]string) {
 		os.Exit(0)
 	}
 
-	if !osdir.ExistDir("/opt/ngs/development/" + (*args)[2]) { //Проверка на отсутствие проекта
+	if !osdir.ExistDir("/opt/ngs/production/" + (*args)[2]) { //Проверка на отсутствие проекта
 		fmt.Println("Проект или служба с указанным именем не найден!")
 		os.Exit(1)
 	} else {
