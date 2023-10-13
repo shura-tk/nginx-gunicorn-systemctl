@@ -1,24 +1,36 @@
 package systemd
 
 import (
-	"nginx-gunicorn-systemctl/internal/commands/systemctl"
 	"os"
 	"text/template"
-)
 
-const pathToService = "/etc/systemd/system/"
-const pathToSocket = pathToService
-const pathToTemplates = "/etc/ngs/templates/"
+	"nginx-gunicorn-systemctl/internal/commands/systemctl"
+	"nginx-gunicorn-systemctl/internal/conf"
+)
 
 type Service struct {
 	NameProject string
+	Production  bool
+	Prefix      string
+	PathPjt     string
 }
 
 type Socket struct {
 	NameProject string
+	Production  bool
+	Prefix      string
+	PathPjt     string
 }
 
 func (s *Socket) Create() {
+	if !s.Production {
+		s.Prefix = conf.PrefixDevelopment
+		s.PathPjt = conf.PathToDevPjt
+	} else {
+		s.Prefix = conf.PrefixProduction
+		s.PathPjt = conf.PathToProdPjt
+	}
+
 	s.generateFile()
 	systemctl.DaemonReload()
 }
@@ -26,13 +38,13 @@ func (s *Socket) Create() {
 func (s *Socket) generateFile() {
 	//Генерация socket-файла на основе шаблона и сохранение его.
 
-	tmp, err := template.New("socket").ParseFiles(pathToTemplates + "socket")
+	tmp, err := template.New("socket").ParseFiles(conf.PathToTemplates + "socket")
 	if err != nil {
 		panic(err)
 	}
 
 	//Создание файла
-	file, err := os.Create(pathToService + "ngs_" + s.NameProject + ".socket")
+	file, err := os.Create(conf.PathToService + s.Prefix + s.NameProject + ".socket")
 	defer file.Close()
 
 	if err != nil {
@@ -49,6 +61,13 @@ func (s *Socket) generateFile() {
 }
 
 func (s *Service) Create() {
+	if !s.Production {
+		s.Prefix = conf.PrefixDevelopment
+		s.PathPjt = conf.PathToDevPjt
+	} else {
+		s.Prefix = conf.PrefixProduction
+		s.PathPjt = conf.PathToProdPjt
+	}
 	s.generateFile()
 	systemctl.DaemonReload()
 
@@ -57,13 +76,13 @@ func (s *Service) Create() {
 func (s *Service) generateFile() {
 	//Генерация systend-файла на основе шаблона и сохранение его.
 
-	tmp, err := template.ParseFiles(pathToTemplates + "service")
+	tmp, err := template.ParseFiles(conf.PathToTemplates + "service")
 	if err != nil {
 		panic(err)
 	}
 
 	//Создание файла
-	file, err := os.Create(pathToService + "ngs_" + s.NameProject + ".service")
+	file, err := os.Create(conf.PathToService + s.Prefix + s.NameProject + ".service")
 	defer file.Close()
 
 	if err != nil {

@@ -1,4 +1,4 @@
-package osdir
+package filedirmanager
 
 import (
 	"os"

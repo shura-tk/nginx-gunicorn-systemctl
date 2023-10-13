@@ -2,19 +2,36 @@ package nginx
 
 import (
 	"fmt"
-	"nginx-gunicorn-systemctl/internal/commands/systemctl"
-	"nginx-gunicorn-systemctl/pkg/osdir"
 	"os"
 	"text/template"
+
+	"nginx-gunicorn-systemctl/internal/commands/systemctl"
+	"nginx-gunicorn-systemctl/internal/conf"
+	"nginx-gunicorn-systemctl/pkg/filedirmanager"
 )
 
 type Nginx struct {
 	NameProject string
+	Domain      string
+	Production  bool
+	Prefix      string
+	PathPjt     string
 }
 
-const defPathNginxConf = "/etc/nginx/sites-available/"
+//const defPathNginxConf = "/etc/nginx/sites-available/"
 
 func (n Nginx) CreateConf() {
+	//Задание значения префикса
+	if !n.Production {
+		n.Prefix = conf.PrefixDevelopment
+		n.PathPjt = conf.PathToDevPjt
+		n.Domain = conf.DomainDevelopmen
+	} else {
+		n.Prefix = conf.PrefixProduction
+		n.PathPjt = conf.PathToProdPjt
+		n.Domain = conf.DomainProduction
+	}
+
 	n.generationConf()
 	n.createSimlink()
 
@@ -23,31 +40,29 @@ func (n Nginx) CreateConf() {
 }
 
 func (n Nginx) createSimlink() {
-	path := "/etc/nginx/sites-enabled/"
-	osdir.CreateAllDir(path)
-	os.Symlink(defPathNginxConf+n.NameProject, path+n.NameProject)
+	filedirmanager.CreateAllDir(conf.PathToNginxConfEnabled)
+	os.Symlink(conf.PathToNginxConfAvailable+n.Prefix+n.NameProject, conf.PathToNginxConfEnabled+n.Prefix+n.NameProject)
 }
 
 func (n Nginx) serviceReload() {
-	sctl := systemctl.New("ngs_" + n.NameProject)
+	sctl := systemctl.New(n.Prefix + n.NameProject)
 	sctl.Restart()
 }
 
 func (n Nginx) generationConf() {
-
-	_, err := os.Stat(defPathNginxConf + n.NameProject) //Проверка на наличие файла по указанному пути
-	if err != nil {                                     //Если не удается найти указанный файл по пути
+	_, err := os.Stat(conf.PathToNginxConfAvailable + n.Prefix + n.NameProject) //Проверка на наличие файла по указанному пути
+	if err != nil {                                                             //Если не удается найти указанный файл по пути
 		if os.IsNotExist(err) {
 
-			osdir.CreateAllDir(defPathNginxConf)
+			filedirmanager.CreateAllDir(conf.PathToNginxConfAvailable)
 
 			//Создание файла конфигурации
-			file, err := os.Create(defPathNginxConf + n.NameProject)
+			file, err := os.Create(conf.PathToNginxConfAvailable + n.Prefix + n.NameProject)
 			if err != nil {
 				panic(err)
 			}
 
-			temp, err := template.ParseFiles("/etc/ngs/templates/nginx")
+			temp, err := template.ParseFiles(conf.PathToTemplatesNginx)
 			if err != nil {
 				fmt.Println(err)
 			}

@@ -1,8 +1,8 @@
 [Unit]
-Description=ngs_{{.NameProject}} socket
+Description={{.Prefix}}{{.NameProject}} socket
 
 [Socket]
-ListenStream=/run/ngs_{{.NameProject}}.sock
+ListenStream=/run/{{.Prefix}}{{.NameProject}}.sock
 
 [Install]
 WantedBy=sockets.target

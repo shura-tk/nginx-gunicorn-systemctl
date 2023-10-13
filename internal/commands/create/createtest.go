@@ -11,17 +11,17 @@ import (
 	"nginx-gunicorn-systemctl/internal/commands/systemd"
 	"nginx-gunicorn-systemctl/internal/conf"
 	"nginx-gunicorn-systemctl/pkg/filedirmanager"
+	fmd "nginx-gunicorn-systemctl/pkg/filedirmanager"
 )
 
-func Create(args *[]string) {
-
+func CreateTest(args *[]string) {
 	//Проверка задано ли имя проекта после команды create
 	if len(*args) < 3 {
 		fmt.Println("Не указано имя проекта!")
 		os.Exit(0)
 	}
 
-	pathToPjt := conf.PathToProdPjt + (*args)[2]
+	pathToPjt := conf.PathToDevPjt + (*args)[2]
 
 	//Проверка на уже существующий проект
 	if filedirmanager.ExistDir(pathToPjt) {
@@ -48,18 +48,20 @@ func Create(args *[]string) {
 		}
 
 		//Генерация файла service
-		service := systemd.Service{NameProject: (*args)[2], Production: true}
+		service := systemd.Service{NameProject: (*args)[2], Production: false}
 		service.Create()
 
 		//Генерация файла socket
-		socket := systemd.Socket{NameProject: (*args)[2], Production: true}
+		socket := systemd.Socket{NameProject: (*args)[2], Production: false}
 		socket.Create()
 
 		//Запуск команды demon-reload
 		systemctl.DaemonReload()
 
 		//Создание конфигурационных файлов nginx
-		nginx.Nginx{NameProject: (*args)[2], Production: true}.CreateConf()
-	}
+		nginx.Nginx{NameProject: (*args)[2], Production: false}.CreateConf()
 
+		//Добавление доменной записи для тестов в /etc/hosts
+		fmd.AddStringEnd(conf.PathToHosts, "127.0.0.1 "+(*args)[2]+"."+conf.DomainDevelopmen)
+	}
 }

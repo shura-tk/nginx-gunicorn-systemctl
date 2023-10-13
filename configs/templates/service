@@ -1,14 +1,14 @@
 [Unit]
-Description=ngs_{{.NameProject}} daemon
-Requires=ngs_{{.NameProject}}.socket
+Description={{.Prefix}}{{.NameProject}} daemon
+Requires={{.Prefix}}{{.NameProject}}.socket
 After=network.target
 
 [Service]
-WorkingDirectory=/opt/ngs/production/{{.NameProject}}/{{.NameProject}}
-ExecStart=/opt/ngs/production/{{.NameProject}}/venv/bin/gunicorn \
+WorkingDirectory={{.PathPjt}}{{.NameProject}}/{{.NameProject}}
+ExecStart={{.PathPjt}}{{.NameProject}}/venv/bin/gunicorn \
           --access-logfile - \
           --workers 3 \
-          --bind unix:/run/ngs_{{.NameProject}}.sock \
+          --bind unix:/run/{{.Prefix}}{{.NameProject}}.sock \
           {{.NameProject}}.wsgi:application
 
 [Install]

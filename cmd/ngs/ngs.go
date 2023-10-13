@@ -17,8 +17,12 @@ func main() {
 	switch args[1] {
 	case "create":
 		create.Create(&args)
+	case "createtest":
+		create.CreateTest(&args)
 	case "restart":
 		restart.Restart(&args)
+	case "restarttest":
+		restart.RestartTest(&args)
 	default:
 		fmt.Println("Данная команда не найдена!")
 		os.Exit(0)

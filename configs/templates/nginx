@@ -1,12 +1,12 @@
 server {
     listen 80;
-    server_name {{.NameProject}}.vbti.local;
+    server_name {{.NameProject}}.{{.Domain}};
     location = /favicon.ico { access_log off; log_not_found off; }
     location /static/ {
-        root /opt/ngs/production/{{.NameProject}}/{{.NameProject}}/{{.NameProject}};
+        root {{.PathPjt}}{{.NameProject}}/{{.NameProject}}/{{.NameProject}};
     }
     location / {
         include proxy_params;
-        proxy_pass http://unix:/run/ngs_{{.NameProject}}.sock;
+        proxy_pass http://unix:/run/{{.Prefix}}{{.NameProject}}.sock;
     }
 }
