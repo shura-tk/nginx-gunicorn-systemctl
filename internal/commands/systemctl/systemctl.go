@@ -19,7 +19,7 @@ func (s *systemctl) Restart() {
 }
 
 func (s *systemctl) Stop() {
-	cmd := "systemctl stop nhs_" + s.name
+	cmd := "systemctl stop ngs_" + s.name
 	err := exec.Command("bash", "-c", cmd).Start()
 	if err != nil {
 		panic(err)

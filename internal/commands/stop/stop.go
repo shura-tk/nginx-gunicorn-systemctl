@@ -1,4 +1,4 @@
-package restart
+package stop
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func Restart(args *[]string) {
+func Stop(args *[]string) {
 	//Проверка задано ли имя проекта после команды restart
 	if len(*args) < 3 {
 		fmt.Println("Не указано имя проекта, который необходимо перезапустить!")
@@ -21,7 +21,7 @@ func Restart(args *[]string) {
 		os.Exit(1)
 	} else {
 		sctl := systemctl.New((*args)[2])
-		sctl.Restart()
+		sctl.Stop()
 	}
 
 }
